@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="jea-gateway-server" />
+        <module name="jea-config-server" />
+        <module name="jea-auth" />
+        <module name="jea-registry-server" />
+      </profile>
+      <profile name="Annotation profile for jea-venta" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="jea-pedidos" />
+        <module name="jea-venta" />
+        <module name="jea-compra" />
+        <module name="jea-pagos" />
+        <module name="jea-cliente" />
+        <module name="jea-proveedor" />
+        <module name="jea-catalogo" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="jes-inventario" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="jea-auth" options="-parameters" />
+      <module name="jea-catalogo" options="-parameters" />
+      <module name="jea-cliente" options="-parameters" />
+      <module name="jea-compra" options="-parameters" />
+      <module name="jea-config-server" options="-parameters" />
+      <module name="jea-gateway-server" options="-parameters" />
+      <module name="jea-pagos" options="-parameters" />
+      <module name="jea-pedidos" options="-parameters" />
+      <module name="jea-proveedor" options="-parameters" />
+      <module name="jea-registry-server" options="-parameters" />
+      <module name="jea-venta" options="-parameters" />
+      <module name="jes-inventario" options="-parameters" />
+    </option>
+  </component>
+</project>

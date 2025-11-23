@@ -1,0 +1,225 @@
+<div class="categorias-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="title-area">
+      <h1>
+        <mat-icon>category</mat-icon>
+        Gestión de Categorías
+      </h1>
+      <p>Administra las categorías de productos de tu inventario</p>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="openDialog()">
+      <mat-icon>add_circle</mat-icon>
+      Nueva Categoría
+    </button>
+  </div>
+
+  <div class="main-content">
+    <mat-card>
+      <!-- Filtros y estadísticas -->
+      <div class="filters-stats-section">
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar categorías</mat-label>
+          <input matInput [(ngModel)]="filtroTexto" (input)="aplicarFiltro()" placeholder="Buscar por ID o nombre...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="stats-section">
+          <div class="stat-card">
+            <mat-icon>category</mat-icon>
+            <div>
+              <h3>{{ totalCategorias }}</h3>
+              <p>Total</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+              <h3>{{ categoriasActivas }}</h3>
+              <p>Activas</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <mat-icon>cancel</mat-icon>
+            <div>
+              <h3>{{ categoriasInactivas }}</h3>
+              <p>Inactivas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" matSort>
+
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>tag</mat-icon> ID
+            </th>
+            <td mat-cell *matCellDef="let categoria">
+              <span class="id-badge">{{ categoria.id }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Nombre -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>label</mat-icon> Nombre
+            </th>
+            <td mat-cell *matCellDef="let categoria">
+              <span class="nombre-text">{{ categoria.nombre }}</span>
+             
+            </td>
+          </ng-container>
+
+          <!-- Estado -->
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-icon>toggle_on</mat-icon> Estado
+            </th>
+            <td mat-cell *matCellDef="let categoria">
+              <mat-chip [class]="getEstadoClase(categoria.estado)">
+                <mat-icon>{{ getEstadoIcono(categoria.estado) }}</mat-icon>
+                {{ getEstadoTexto(categoria.estado) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Fecha -->
+          <ng-container matColumnDef="fechaCreacion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>schedule</mat-icon> Creada
+            </th>
+            <td mat-cell *matCellDef="let categoria">
+              <ng-container *ngIf="categoria.fechaCreacion; else sinFecha">
+                <span>{{ categoria.fechaCreacion | date:'dd/MM/yyyy' }}</span><br>
+                <small>{{ categoria.fechaCreacion | date:'HH:mm' }}</small>
+              </ng-container>
+              <ng-template #sinFecha>-</ng-template>
+            </td>
+          </ng-container>
+
+          <!-- Acciones -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-icon>settings</mat-icon> Acciones
+            </th>
+            <td mat-cell *matCellDef="let categoria">
+              <div class="acciones-container">
+                <button mat-icon-button color="primary" (click)="openDialog(categoria)" matTooltip="Editar categoría">
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-icon-button [color]="categoria.estado ? 'warn' : 'accent'" (click)="toggleEstado(categoria)" [matTooltip]="categoria.estado ? 'Desactivar' : 'Activar'">
+                  <mat-icon>{{ categoria.estado ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+                </button>
+
+                <button mat-icon-button color="warn" (click)="eliminarCategoria(categoria)" matTooltip="Eliminar categoría">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 20, 50]" [pageSize]="10" showFirstLastButtons></mat-paginator>
+      </div>
+
+      <!-- Sin datos -->
+      <div *ngIf="dataSource.data.length === 0" class="no-data">
+        <mat-icon>category</mat-icon>
+        <h3>No hay categorías registradas</h3>
+        <p>Comienza creando tu primera categoría de productos</p>
+        <button mat-raised-button color="primary" (click)="openDialog()">
+          <mat-icon>add</mat-icon>
+          Crear Primera Categoría
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showDialog" (click)="closeDialog()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <mat-icon>{{ categoriaEditando ? 'edit' : 'add_circle' }}</mat-icon>
+        {{ categoriaEditando ? 'Editar Categoría' : 'Nueva Categoría' }}
+      </h2>
+      <button mat-icon-button (click)="closeDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="categoriaForm" (ngSubmit)="onSubmit()">
+      <div class="modal-content">
+        <!-- Nombre -->
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre de la Categoría</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej: Electrónicos, Ropa..." maxlength="50">
+          <mat-icon matSuffix>label</mat-icon>
+          <mat-hint>Mínimo 2 caracteres, máximo 50</mat-hint>
+
+          <mat-error *ngIf="categoriaForm.get('nombre')?.hasError('required')">
+            El nombre es requerido
+          </mat-error>
+          <mat-error *ngIf="categoriaForm.get('nombre')?.hasError('minlength')">
+            Debe tener al menos 2 caracteres
+          </mat-error>
+          <mat-error *ngIf="categoriaForm.get('nombre')?.hasError('maxlength')">
+            No puede exceder los 50 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Info adicional -->
+        <div class="info-card" *ngIf="!categoriaEditando">
+          <mat-icon>info</mat-icon>
+          <div>
+            <h4>Información sobre categorías</h4>
+            <ul>
+              <li>Se crean como <strong>activas</strong></li>
+              <li>Sirven para organizar productos</li>
+              <li>Se pueden activar o desactivar</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Estado (si edita) -->
+        <div class="estado-actual" *ngIf="categoriaEditando">
+          <h4><mat-icon>info</mat-icon> Estado Actual</h4>
+          <mat-chip [class]="getEstadoClase(categoriaEditando.estado)">
+            <mat-icon>{{ getEstadoIcono(categoriaEditando.estado) }}</mat-icon>
+            {{ getEstadoTexto(categoriaEditando.estado) }}
+          </mat-chip>
+          <p>
+            {{ categoriaEditando.estado
+            ? 'Esta categoría está activa y disponible para usar en productos.'
+            : 'Esta categoría está inactiva y no aparece en formularios de productos.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-actions">
+        <button type="button" mat-stroked-button (click)="closeDialog()" [disabled]="isLoading">
+          <mat-icon>cancel</mat-icon>
+          Cancelar
+        </button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!categoriaForm.valid || isLoading">
+          <mat-icon *ngIf="!isLoading">{{ categoriaEditando ? 'save' : 'add' }}</mat-icon>
+          <mat-icon *ngIf="isLoading" class="loading">hourglass_empty</mat-icon>
+          {{ isLoading ? 'Guardando...' : (categoriaEditando ? 'Actualizar Categoría' : 'Crear Categoría') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

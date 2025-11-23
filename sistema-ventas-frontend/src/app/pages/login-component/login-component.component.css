@@ -1,0 +1,114 @@
+/* Fondo general */
+.background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: url("../../../../public/fondo-futurista-degradado-geometrico_23-2149116406.png") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  /* puedes cambiar la imagen o usar un gradiente si prefieres */
+}
+
+/* Contenedor de login estilo vidrio */
+.login-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px); /* soporte Safari */
+  border-radius: 28px;
+  padding: 40px 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  color: #fff;
+  width: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Título */
+.login-container h2 {
+  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+}
+
+
+/* Estilo de inputs */
+.input-group {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.input-group input {
+  width: 85%;
+  padding: 12px 40px 12px 15px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  outline: none;
+  font-size: 16px;
+}
+
+.input-group .icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #ccc;
+}
+
+/* Opciones */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.options a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Botón login */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #000;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-btn:hover {
+  background: #333;
+}
+
+/* Registro */
+.register {
+  font-size: 14px;
+  margin-top: 20px;
+  color: #ddd;
+}
+
+.register a {
+  color: #fff;
+  text-decoration: underline;
+}

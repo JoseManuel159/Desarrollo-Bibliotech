@@ -1,0 +1,297 @@
+<div class="clientes-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="title-area">
+      <h1>
+        <mat-icon>people</mat-icon>
+        Gestión de Clientes
+      </h1>
+      <p>Administra la información de tus clientes registrados</p>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="openDialog()">
+      <mat-icon>add_circle</mat-icon>
+      Nuevo Cliente
+    </button>
+  </div>
+
+  <div class="main-content">
+    <mat-card>
+      <!-- Filtros y estadísticas -->
+      <div class="filters-stats-section">
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar clientes</mat-label>
+          <input matInput [(ngModel)]="filtroTexto" (input)="aplicarFiltro()" placeholder="Buscar por DNI, nombre o email...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="stats-section">
+          <div class="stat-card">
+            <mat-icon>people</mat-icon>
+            <div>
+              <h3>{{ totalClientes }}</h3>
+              <p>Total</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+              <h3>{{ clientesActivos }}</h3>
+              <p>Activos</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <mat-icon>cancel</mat-icon>
+            <div>
+              <h3>{{ clientesInactivos }}</h3>
+              <p>Inactivos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" matSort>
+
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>tag</mat-icon> ID
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <span class="id-badge">{{ cliente.id }}</span>
+            </td>
+          </ng-container>
+
+          <!-- DNI -->
+          <ng-container matColumnDef="dni">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>badge</mat-icon> DNI
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <span class="dni-text">{{ cliente.dni }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Nombre Completo -->
+          <ng-container matColumnDef="nombreCompleto">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>person</mat-icon> Cliente
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <div class="cliente-info">
+                <span class="cliente-nombre">{{ cliente.nombre }} {{ cliente.apellido || '' }}</span>
+                <span *ngIf="cliente.email" class="cliente-email">{{ cliente.email }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Contacto -->
+          <ng-container matColumnDef="contacto">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-icon>contact_phone</mat-icon> Contacto
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <div class="contacto-info">
+                <span *ngIf="cliente.telefono" class="telefono">
+                  <mat-icon>phone</mat-icon> {{ cliente.telefono }}
+                </span>
+                <span *ngIf="cliente.direccion" class="direccion">
+                  <mat-icon>location_on</mat-icon> {{ cliente.direccion | slice:0:30 }}{{ cliente.direccion && cliente.direccion.length > 30 ? '...' : '' }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Estado -->
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-icon>toggle_on</mat-icon> Estado
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <mat-chip [class]="getEstadoClase(cliente.activo)">
+                <mat-icon>{{ getEstadoIcono(cliente.activo) }}</mat-icon>
+                {{ getEstadoTexto(cliente.activo) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Fecha -->
+          <ng-container matColumnDef="fechaRegistro">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon>schedule</mat-icon> Registrado
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <ng-container *ngIf="cliente.fechaRegistro; else sinFecha">
+                <span>{{ cliente.fechaRegistro | date:'dd/MM/yyyy' }}</span><br>
+                <small>{{ cliente.fechaRegistro | date:'HH:mm' }}</small>
+              </ng-container>
+              <ng-template #sinFecha>-</ng-template>
+            </td>
+          </ng-container>
+
+          <!-- Acciones -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-icon>settings</mat-icon> Acciones
+            </th>
+            <td mat-cell *matCellDef="let cliente">
+              <div class="acciones-container">
+                <button mat-icon-button color="primary" (click)="openDialog(cliente)" matTooltip="Editar cliente">
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-icon-button [color]="cliente.activo ? 'warn' : 'accent'" (click)="toggleEstado(cliente)" [matTooltip]="cliente.activo ? 'Desactivar' : 'Activar'">
+                  <mat-icon>{{ cliente.activo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+                </button>
+
+                <button mat-icon-button color="warn" (click)="eliminarCliente(cliente)" matTooltip="Eliminar cliente">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 20, 50]" [pageSize]="10" showFirstLastButtons></mat-paginator>
+      </div>
+
+      <!-- Sin datos -->
+      <div *ngIf="dataSource.data.length === 0" class="no-data">
+        <mat-icon>people</mat-icon>
+        <h3>No hay clientes registrados</h3>
+        <p>Comienza registrando tu primer cliente</p>
+        <button mat-raised-button color="primary" (click)="openDialog()">
+          <mat-icon>add</mat-icon>
+          Crear Primer Cliente
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showDialog" (click)="closeDialog()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <mat-icon>{{ clienteEditando ? 'edit' : 'add_circle' }}</mat-icon>
+        {{ clienteEditando ? 'Editar Cliente' : 'Nuevo Cliente' }}
+      </h2>
+      <button mat-icon-button (click)="closeDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
+      <div class="modal-content">
+        <!-- DNI -->
+        <mat-form-field appearance="outline">
+          <mat-label>DNI</mat-label>
+          <input matInput formControlName="dni" placeholder="Ej: 12345678" maxlength="8">
+          <mat-icon matSuffix>badge</mat-icon>
+          <mat-hint>8 dígitos numéricos</mat-hint>
+          <mat-error *ngIf="clienteForm.get('dni')?.hasError('required')">
+            El DNI es requerido
+          </mat-error>
+          <mat-error *ngIf="clienteForm.get('dni')?.hasError('pattern')">
+            El DNI debe tener 8 dígitos
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Nombre -->
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej: Juan Carlos">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
+            El nombre es requerido
+          </mat-error>
+          <mat-error *ngIf="clienteForm.get('nombre')?.hasError('minlength')">
+            Debe tener al menos 2 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Apellido -->
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido</mat-label>
+          <input matInput formControlName="apellido" placeholder="Ej: Pérez García">
+          <mat-icon matSuffix>person_outline</mat-icon>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="Ej: cliente@email.com">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
+            El email es requerido
+          </mat-error>
+          <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
+            Ingrese un email válido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Teléfono -->
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono" placeholder="Ej: 987654321">
+          <mat-icon matSuffix>phone</mat-icon>
+        </mat-form-field>
+
+        <!-- Dirección -->
+        <mat-form-field appearance="outline">
+          <mat-label>Dirección</mat-label>
+          <textarea matInput formControlName="direccion" rows="2" placeholder="Ej: Av. Principal 123, Lima"></textarea>
+          <mat-icon matSuffix>location_on</mat-icon>
+        </mat-form-field>
+
+        <!-- Info adicional -->
+        <div class="info-card" *ngIf="!clienteEditando">
+          <mat-icon>info</mat-icon>
+          <div>
+            <h4>Información sobre clientes</h4>
+            <ul>
+              <li>Se crean como <strong>activos</strong></li>
+              <li>DNI y email deben ser únicos</li>
+              <li>Se puede activar o desactivar</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Estado (si edita) -->
+        <div class="estado-actual" *ngIf="clienteEditando">
+          <h4><mat-icon>info</mat-icon> Estado Actual</h4>
+          <mat-chip [class]="getEstadoClase(clienteEditando.activo)">
+            <mat-icon>{{ getEstadoIcono(clienteEditando.activo) }}</mat-icon>
+            {{ getEstadoTexto(clienteEditando.activo) }}
+          </mat-chip>
+          <p>
+            {{ clienteEditando.activo
+            ? 'Este cliente está activo y puede realizar compras.'
+            : 'Este cliente está inactivo y no aparece en formularios de venta.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-actions">
+        <button type="button" mat-stroked-button (click)="closeDialog()" [disabled]="isLoading">
+          <mat-icon>cancel</mat-icon>
+          Cancelar
+        </button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!clienteForm.valid || isLoading">
+          <mat-icon *ngIf="!isLoading">{{ clienteEditando ? 'save' : 'add' }}</mat-icon>
+          <mat-icon *ngIf="isLoading" class="loading">hourglass_empty</mat-icon>
+          {{ isLoading ? 'Guardando...' : (clienteEditando ? 'Actualizar Cliente' : 'Crear Cliente') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

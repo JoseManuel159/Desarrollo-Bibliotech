@@ -1,0 +1,25 @@
+<div class="background">
+  <div class="login-container">
+    <h2>Login</h2>
+    <form (ngSubmit)="login()">
+      <div class="input-group">
+        <input type="text" placeholder="Usuario" [(ngModel)]="userName" name="userName" required />
+        <span class="icon">👤</span>
+      </div>
+
+      <div class="input-group">
+        <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required />
+        <span class="icon">🔒</span>
+      </div>
+
+      <div class="options">
+        <label><input type="checkbox" /> Remember Me</label>
+        <a href="#">Forget Password</a>
+      </div>
+
+      <button type="submit" class="login-btn">Log In</button>
+
+      <p class="register">Don't have an account? <a href="#">Register</a></p>
+    </form>
+  </div>
+</div>

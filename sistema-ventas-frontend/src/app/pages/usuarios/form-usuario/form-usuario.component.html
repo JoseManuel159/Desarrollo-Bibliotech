@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Nuevo Usuario</h2>
+
+<form [formGroup]="usuarioForm" (ngSubmit)="guardar()" mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Nombres</mat-label>
+    <input matInput formControlName="nombres" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Apellido Paterno</mat-label>
+    <input matInput formControlName="apellidoPaterno" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Apellido Materno</mat-label>
+    <input matInput formControlName="apellidoMaterno" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>DNI</mat-label>
+    <input matInput formControlName="dni" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Dirección</mat-label>
+    <input matInput formControlName="direccion" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Teléfono</mat-label>
+    <input matInput formControlName="telefono" />
+  </mat-form-field>
+
+  <!-- Nombre de Usuario solo en creación -->
+  <mat-form-field *ngIf="!data" appearance="outline" class="form-campo">
+    <mat-label>Nombre de Usuario</mat-label>
+    <input matInput formControlName="userName" />
+  </mat-form-field>
+
+  <!-- Contraseña solo en creación -->
+  <mat-form-field *ngIf="!data" appearance="outline" class="form-campo">
+    <mat-label>Contraseña</mat-label>
+    <input matInput type="password" formControlName="password" />
+  </mat-form-field>
+
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Rol</mat-label>
+    <mat-select formControlName="rolId">
+      <mat-option *ngFor="let rol of roles" [value]="rol.idRol">
+        {{ rol.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="acciones">
+    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-raised-button color="primary" type="submit">Guardar</button>
+  </div>
+</form>

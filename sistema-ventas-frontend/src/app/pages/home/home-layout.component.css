@@ -1,0 +1,190 @@
+/* ----- HEADER (Encabezado Superior) ----- */
+@keyframes neonGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 6px #facc15,
+      0 0 12px #facc15,
+      0 0 18px #facc15,
+      0 0 24px #38bdf8,
+      0 0 32px #38bdf8;
+  }
+  50% {
+    text-shadow:
+      0 0 10px #fde047,
+      0 0 20px #facc15,
+      0 0 30px #38bdf8,
+      0 0 40px #0ea5e9;
+  }
+}
+
+
+/* ----- HEADER ----- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0f172a;
+  color: white;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  flex-wrap: wrap; /* Por si en móvil se necesita */
+  box-shadow:
+    0 0 10px #38bdf8,
+    0 0 20px #0ea5e9,
+    0 0 30px rgba(56, 189, 248, 0.3);
+}
+
+/* ----- NUEVO LEFT SECTION ----- */
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+/* ----- LOGO ESTILO GAMER ----- */
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #facc15;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  animation: neonGlow 1.5s ease-in-out infinite alternate;
+  text-transform: uppercase;
+}
+
+.logo i {
+  font-size: 1.8rem;
+  color: #38bdf8;
+  animation: neonGlow 1.5s ease-in-out infinite alternate;
+}
+
+
+
+/* ----- BOTÓN DE MENÚ ----- */
+.menu-btn {
+  background: none;
+  border: none;
+  color: #f8fafc;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.menu-btn:hover {
+  transform: scale(1.2);
+  color: #38bdf8;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(to right, #f43f5e, #e11d48);
+  border: none;
+  padding: 10px 18px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 6px 14px rgba(244, 63, 94, 0.5);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(to right, #e11d48, #be123c);
+  transform: scale(1.05);
+}
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Espacio entre el botón y el logo */
+}
+
+/* ----- LAYOUT CONTENEDOR ----- */
+.container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #0f172a;
+}
+
+/* ----- SIDEBAR (Menú Lateral) ----- */
+.sidebar {
+  background-color: #1e293b;
+  width: 190px;
+  padding: 15px 0;
+  border-right: 1px solid #334155;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-list li a {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 18px;
+  text-decoration: none;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+
+.nav-list li a:hover {
+  background-color: #334155;
+  border-left: 4px solid #38bdf8;
+  color: #38bdf8;
+  transform: translateX(5px);
+}
+
+
+.nav-list li a.active {
+  background: linear-gradient(to right, #38bdf8, #0ea5e9);
+  color: #0f172a;
+  font-weight: bold;
+  border-radius: 0 20px 20px 0;
+  box-shadow: inset 4px 0 0 #0ea5e9;
+}
+
+
+.nav-list li a .fa {
+  font-size: 22px;
+  width: 24px;
+  text-align: center;
+}
+
+/* Texto del ítem (categoría, usuario, etc.) */
+.link-text {
+  flex: 1;
+  transition: opacity 0.3s ease, width 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .link-text {
+  opacity: 0;
+  width: 0;
+}
+
+/* ----- CONTENIDO PRINCIPAL ----- */
+.content {
+  flex-grow: 1;
+  padding: 30px;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+}

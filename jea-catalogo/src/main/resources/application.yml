@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: jea-catalogo-service
+  profiles:
+    active: development
+  config:
+    import: optional:configserver:http://root:123456@localhost:7070
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB

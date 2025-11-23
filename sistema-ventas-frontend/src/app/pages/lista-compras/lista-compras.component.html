@@ -1,0 +1,335 @@
+<div class="lista-compras-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="title-area">
+      <h1>
+        <mat-icon>receipt_long</mat-icon>
+        Lista de Compras
+      </h1>
+      <p class="subtitle">Consulta y gestiona el historial de compras realizadas</p>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <mat-card class="main-card">
+      <!-- Filtros de búsqueda -->
+      <div class="filtros-section">
+        <div class="filtros-header">
+          <h3>
+            <mat-icon>filter_list</mat-icon>
+            Filtros de Búsqueda
+          </h3>
+        </div>
+        
+        <div class="filtros-grid">
+          <div class="filtro-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Buscar por Serie</mat-label>
+              <input matInput [(ngModel)]="busquedaSerie" (keyup.enter)="buscarPorSerie()" placeholder="ABC">
+              <mat-icon matSuffix (click)="buscarPorSerie()">search</mat-icon>
+            </mat-form-field>
+          </div>
+          
+          <div class="filtro-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Buscar por Número</mat-label>
+              <input matInput [(ngModel)]="busquedaNumero" (keyup.enter)="buscarPorNumero()" placeholder="000001">
+              <mat-icon matSuffix (click)="buscarPorNumero()">search</mat-icon>
+            </mat-form-field>
+          </div>
+          
+          <div class="filtro-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio">
+              <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+              <mat-datepicker #pickerInicio></mat-datepicker>
+            </mat-form-field>
+          </div>
+          
+          <div class="filtro-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin">
+              <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFin></mat-datepicker>
+            </mat-form-field>
+          </div>
+          
+          <div class="filtro-actions">
+            <button mat-raised-button color="primary" (click)="buscarPorFechas()" class="action-btn">
+              <mat-icon>date_range</mat-icon>
+              Buscar por Fechas
+            </button>
+            <button mat-stroked-button (click)="limpiarFiltros()" class="action-btn clear-btn">
+              <mat-icon>clear</mat-icon>
+              Limpiar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen estadístico -->
+      <div class="estadisticas-section" *ngIf="comprasFiltradas.length > 0">
+        <div class="stats-grid">
+          <div class="stat-card compras-card">
+            <div class="stat-icon">
+              <mat-icon>shopping_cart</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>{{comprasFiltradas.length}}</h3>
+              <p>Total de Compras</p>
+            </div>
+          </div>
+          
+          <div class="stat-card productos-card">
+            <div class="stat-icon">
+              <mat-icon>inventory_2</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>{{getTotalProductosGeneral()}}</h3>
+              <p>Productos Únicos</p>
+            </div>
+          </div>
+          
+          <div class="stat-card monto-card">
+            <div class="stat-icon">
+              <mat-icon>attach_money</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>{{totalCompras | currency:'PEN':'symbol':'1.2-2'}}</h3>
+              <p>Monto Total</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones mejoradas -->
+      <div class="acciones-section">
+        <div class="acciones-container">
+          <div class="acciones-principales">
+            <button mat-raised-button color="primary" (click)="exportarCompras()" 
+                    class="export-btn" [disabled]="comprasFiltradas.length === 0"
+                    matTooltip="Generar reporte consolidado en PDF">
+              <mat-icon>picture_as_pdf</mat-icon>
+              Reporte Consolidado PDF
+            </button>
+            
+            <button mat-stroked-button color="accent" (click)="exportarCompras()" 
+                    class="export-btn" [disabled]="comprasFiltradas.length === 0"
+                    matTooltip="Exportar datos en otros formatos">
+              <mat-icon>download</mat-icon>
+              Exportar Datos
+            </button>
+          </div>
+          
+          <div class="info-acciones" *ngIf="comprasFiltradas.length > 0">
+            <span class="info-texto">
+              {{comprasFiltradas.length}} compra(s) seleccionada(s) para exportar
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de compras -->
+      <div class="tabla-container">
+        <div class="tabla-wrapper">
+          <mat-table [dataSource]="comprasFiltradas" class="compras-table">
+            
+            <!-- Columna Serie -->
+            <ng-container matColumnDef="serie">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>tag</mat-icon>
+                  Serie
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <span class="serie-badge">{{compra.serie}}</span>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Columna Número -->
+            <ng-container matColumnDef="numero">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>confirmation_number</mat-icon>
+                  Número
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <span class="numero-badge">{{compra.numero}}</span>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Columna Fecha -->
+            <ng-container matColumnDef="fechaCompra">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>schedule</mat-icon>
+                  Fecha y Hora
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <div class="fecha-info">
+                  <span class="fecha">{{compra.fechaCompra | date:'dd/MM/yyyy'}}</span>
+                  <span class="hora">{{compra.fechaCompra | date:'HH:mm'}}</span>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Columna Proveedor -->
+            <ng-container matColumnDef="proveedor">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>business</mat-icon>
+                  Proveedor
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <div class="proveedor-info">
+                  <strong class="nombre">{{compra.proveedor?.nombre || 'N/A'}}</strong>
+                  <small class="ruc">RUC: {{compra.proveedor?.ruc || 'Sin RUC'}}</small>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Columna Productos -->
+            <ng-container matColumnDef="productos">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>inventory_2</mat-icon>
+                  Productos
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <div class="productos-info">
+                  <div class="productos-resumen">
+                    <span class="producto-nombre">{{getProductosResumen(compra)}}</span>
+                    <div class="productos-meta">
+                      <span class="productos-count">
+                        <mat-icon>shopping_bag</mat-icon>
+                        {{compra.detalle?.length || 0}} producto(s)
+                      </span>
+                      <span class="cantidad-total">
+                        <mat-icon>inventory</mat-icon>
+                        {{getTotalProductos(compra)}} unidad(es)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Columna Total -->
+            <ng-container matColumnDef="total">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>paid</mat-icon>
+                  Total
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <div class="total-amount">
+                  {{compra.total | currency:'PEN':'symbol':'1.2-2'}}
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Columna Acciones MEJORADA -->
+            <ng-container matColumnDef="acciones">
+              <mat-header-cell *matHeaderCellDef class="header-cell">
+                <div class="header-content">
+                  <mat-icon>settings</mat-icon>
+                  Acciones
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let compra" class="data-cell">
+                <div class="acciones-cell">
+                  <!-- Botón de menú principal -->
+                  <button mat-icon-button [matMenuTriggerFor]="menuAcciones" 
+                          color="primary" matTooltip="Más opciones" class="action-button menu-trigger">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  
+                  <!-- Menú de acciones -->
+                  <mat-menu #menuAcciones="matMenu" class="custom-menu">
+                    <button mat-menu-item (click)="verDetalle(compra)">
+                      <mat-icon>visibility</mat-icon>
+                      <span>Ver Detalle</span>
+                    </button>
+                    
+                    <button mat-menu-item (click)="generarFacturaPDF(compra)" class="pdf-menu-item">
+                      <mat-icon color="accent">picture_as_pdf</mat-icon>
+                      <span>Generar Factura PDF</span>
+                    </button>
+                    
+                    <mat-divider></mat-divider>
+                    
+                    <button mat-menu-item (click)="eliminarCompra(compra)" class="delete-menu-item">
+                      <mat-icon color="warn">delete</mat-icon>
+                      <span>Eliminar</span>
+                    </button>
+                  </mat-menu>
+
+                  <!-- Botones de acceso rápido -->
+                  <div class="quick-actions">
+                    <button mat-icon-button color="accent" (click)="generarFacturaPDF(compra)" 
+                            matTooltip="Generar Factura PDF" class="action-button pdf-button">
+                      <mat-icon>picture_as_pdf</mat-icon>
+                    </button>
+                    
+                    <button mat-icon-button color="primary" (click)="verDetalle(compra)" 
+                            matTooltip="Ver detalle" class="action-button detail-button">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"></mat-row>
+          </mat-table>
+
+          <!-- Mensaje cuando no hay datos -->
+          <div *ngIf="comprasFiltradas.length === 0" class="no-data-container">
+            <div class="no-data-content">
+              <mat-icon class="no-data-icon">inbox</mat-icon>
+              <h3>No se encontraron compras</h3>
+              <p>No hay compras que coincidan con los filtros aplicados</p>
+              <button mat-raised-button color="primary" (click)="limpiarFiltros()" class="reload-btn">
+                <mat-icon>refresh</mat-icon>
+                Ver todas las compras
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer informativo -->
+      <div class="footer-info" *ngIf="comprasFiltradas.length > 0">
+        <div class="footer-stats">
+          <div class="stat-item">
+            <mat-icon>receipt</mat-icon>
+            <span>{{comprasFiltradas.length}} compras mostradas</span>
+          </div>
+          <div class="stat-item">
+            <mat-icon>inventory_2</mat-icon>
+            <span>{{getTotalProductosGeneral()}} productos únicos</span>
+          </div>
+          <div class="stat-item">
+            <mat-icon>paid</mat-icon>
+            <span>Total: {{totalCompras | currency:'PEN':'symbol':'1.2-2'}}</span>
+          </div>
+        </div>
+        
+        <div class="footer-actions">
+          <small class="help-text">
+            💡 Tip: Haga clic en <mat-icon class="inline-icon">picture_as_pdf</mat-icon> para generar la factura individual de cada compra
+          </small>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

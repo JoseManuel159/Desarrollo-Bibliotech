@@ -1,0 +1,124 @@
+<header class="header">
+  <div class="logo">
+
+    <span>Sistema de Ventas</span>
+  </div>
+
+  <div class="cliente-header">
+    <div class="cliente-buscador">
+      <input type="text" [(ngModel)]="dniCliente" placeholder="Ingresar DNI del cliente">
+      <button class="btn-buscar-cliente" (click)="buscarCliente()">🔍 Buscar</button>
+    </div>
+
+    <div class="cliente-info" *ngIf="clienteEncontrado">
+      <p><strong>Cliente:</strong> {{ clienteEncontrado.nombre }} {{ clienteEncontrado.apellido }}</p>
+    </div>
+  </div>
+
+
+  <div class="carrito">
+  </div>
+</header>
+
+<main class="contenido">
+
+
+  <!-- Zona central: Catálogo de productos -->
+  <section class="zona-central">
+    <!-- Buscadores centrados -->
+    <div class="busqueda-categorias" style="justify-content: center;">
+      <!-- Búsqueda por texto -->
+      <div class="buscador">
+        <input type="text" [(ngModel)]="terminoBusqueda" (input)="filtrarProductos()" placeholder="Buscar por código o nombre">
+        <button class="btn-buscar" (click)="filtrarProductos()">🔍</button>
+      </div>
+      <!-- Selector de categoría -->
+      <!-- Botón que abre/cierra el menú -->
+      <div class="btn-categorias-wrapper">
+        <button class="btn-categorias" (click)="menuCategoriasAbierto = !menuCategoriasAbierto">
+          ☰ Categorías ▼
+        </button>
+
+        <div class="menu-categorias" [class.visible]="menuCategoriasAbierto">
+          <button (click)="filtrarPorCategoria(null)">Todos</button>
+          <button *ngFor="let cat of categorias" (click)="filtrarPorCategoria(cat)">
+            {{ cat.nombre }}
+          </button>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <!-- Catálogo de productos -->
+    <div class="productos">
+      <div class="producto" *ngFor="let producto of productosFiltrados">
+        <p class="codigo">Código: {{ producto.codigo }}</p>
+        <img [src]="'http://localhost:8085/imagenes/' + producto.imagen" [alt]="producto.nombre" (error)="imagenError($event)">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="categoria">Categoría: {{ producto.categoria.nombre }}</p>
+        <p class="stock">Stock: {{ producto.cantidad }}</p>
+        <p class="precio">S/ {{ producto.precioVenta }}</p>
+        <button class="btn-agregar" (click)="agregarACanasta(producto)">Agregar</button>
+      </div>
+    </div>
+
+  </section>
+
+
+  <aside class="zona-lateral">
+    <div class="canasta">
+      <h3>🧺 Canasta</h3>
+
+      <div class="item-canasta" *ngFor="let item of items">
+        <img [src]="'http://localhost:8085/imagenes/' + item.producto.imagen"
+             alt="{{ item.producto.nombre }}"
+             class="img-canasta"
+             (error)="imagenError($event)">
+        <div class="detalle-canasta">
+          <h4>{{ item.producto.nombre }}</h4>
+          <p>S/ {{ item.producto.precioVenta }}</p>
+        </div>
+
+        <div class="controles-canasta">
+          <button class="btn-eliminar" (click)="eliminarItem(item.producto)">🗑️</button>
+          <div class="acciones">
+            <button class="btn-cantidad" (click)="disminuirCantidad(item.producto)">−</button>
+            <span class="cantidad">{{ item.cantidad }}</span>
+            <button class="btn-cantidad" (click)="aumentarCantidad(item.producto)">+</button>
+          </div>
+          <div class="subtotal">
+            S/ {{ (item.producto.precioVenta * item.cantidad) | number:'1.2-2' }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="items.length === 0">La canasta está vacía</div>
+    </div>
+
+    <div class="resumen-pago">
+      <div class="metodo-pago">
+        <button
+          class="btn-metodo efectivo"
+          [class.seleccionado]="metodoPago === 1"
+          (click)="seleccionarMetodoPago(1)">Efectivo</button>
+
+        <button
+          class="btn-metodo yape"
+          [class.seleccionado]="metodoPago === 2"
+          (click)="seleccionarMetodoPago(2)">Yape</button>
+      </div>
+
+      <div class="total">
+        <span>Total:</span>
+        <span class="monto-total">S/ {{ total | number:'1.2-2' }}</span>
+      </div>
+
+      <button class="btn-pagar" (click)="registrarVenta()">Pagar</button>
+    </div>
+  </aside>
+
+
+
+</main>

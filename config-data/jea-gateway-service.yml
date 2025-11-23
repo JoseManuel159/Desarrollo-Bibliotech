@@ -1,0 +1,87 @@
+server:
+  port: 8085
+eureka:
+  client:
+    serviceUrl:
+      #defaultZone: http://localhost:8090/eureka
+      defaultZone: ${EUREKA_URI:http://localhost:8090/eureka}
+  instance:
+    #hostname: localhost
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+      discovery:
+        locator:
+          enable: true
+      routes:
+        - id: jea-auth-service
+          uri: lb://jea-auth-service
+          predicates:
+            - Path=/auth/**, /usuario/**, /rol/**
+
+        - id: jea-catalogo-service
+          uri: lb://jea-catalogo-service
+          predicates:
+            - Path=/categoria/**, /producto/**, /imagenes/**
+          filters:
+            - AuthFilter
+
+        - id: jea-cliente-service
+          uri: lb://jea-cliente-service
+          predicates:
+            - Path=/cliente/**
+          filters:
+            - AuthFilter
+
+        - id: jea-pagos-service
+          uri: lb://jea-pagos-service
+          predicates:
+            - Path=/pagos/**
+          filters:
+            - AuthFilter
+
+        - id: jea-venta-service
+          uri: lb://jea-venta-service
+          predicates:
+            - Path=/venta/**
+          filters:
+            - AuthFilter
+
+        - id: jea-pedido-service
+          uri: lb://jea-pedido-service
+          predicates:
+            - Path=/pedido/**
+          filters:
+            - AuthFilter
+
+        - id: jea-compra-service
+          uri: lb://jea-compra-service
+          predicates:
+            - Path=/compra/**
+          filters:
+            - AuthFilter
+
+        - id: jea-proveedor-service
+          uri: lb://jea-proveedor-service
+          predicates:
+            - Path=/proveedor/**
+          filters:
+            - AuthFilter
+
+        - id: jea-inventario-service
+          uri: lb://jea-inventario-service
+          predicates:
+            - Path=/inventario/**
+          filters:
+            - AuthFilter
