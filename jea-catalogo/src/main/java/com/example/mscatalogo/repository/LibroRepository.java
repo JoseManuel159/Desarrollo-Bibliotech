@@ -1,18 +1,18 @@
 package com.example.mscatalogo.repository;
 
-import com.example.mscatalogo.entity.Producto;
+import com.example.mscatalogo.entity.Libro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ProductoRepository extends JpaRepository<Producto, Long> {
+public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     boolean existsByCodigo(String codigo);
 
-    boolean existsByNombre(String nombre);
+    boolean existsByTitulo(String titulo);
 
-    Optional<Producto> findByCodigo(String codigo);
+    Optional<Libro> findByCodigo(String codigo);
 
 }

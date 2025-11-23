@@ -7,7 +7,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/Erick-Franco/Sistema-ventas-ms.git
+          uri: https://github.com/JoseManuel159/Desarrollo-Bibliotech.git
           searchPaths: config-data
           default-label: main
   security:
