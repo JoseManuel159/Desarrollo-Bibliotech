@@ -177,4 +177,15 @@ public class LibroController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping
+    public ResponseEntity<Libro> crearLibro(@RequestBody Libro libro) {
+        try {
+            Libro nuevoLibro = libroService.guardarConImagen(libro, null);
+            return ResponseEntity.ok(nuevoLibro);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

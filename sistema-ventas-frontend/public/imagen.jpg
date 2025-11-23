@@ -1,7 +1,0 @@
-<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="300" height="300" fill="#f0f0f0"/>
-<rect x="50" y="50" width="200" height="200" fill="#e0e0e0" stroke="#ccc" stroke-width="2"/>
-<circle cx="120" cy="120" r="20" fill="#999"/>
-<path d="M80 200L120 160L160 180L220 140L220 200H80Z" fill="#ccc"/>
-<text x="150" y="250" font-family="Arial, sans-serif" font-size="16" fill="#666" text-anchor="middle">Producto</text>
-</svg>

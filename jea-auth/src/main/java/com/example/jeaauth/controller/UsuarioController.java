@@ -64,5 +64,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioActualizado);
     }
 
+    @GetMapping
+    public ResponseEntity<List<UsuarioListadoDto>> listarTodos() {
+        List<UsuarioListadoDto> usuarios = usuarioService.listarTodosConRol();
+        return ResponseEntity.ok(usuarios);
+    }
+
+
 
 }

@@ -1,19 +1,23 @@
 server:
-
-  port: ${PORT:${SERVERS_PORT:0}}
+  port: ${PORT:${SERVER_PORT:0}}
 
 spring:
   application:
     name: jea-auth-service
-  jpa:
-    hibernate.ddl-auto: update
-    generate-ddl: true
-    show-sql: true
+
   datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/auth-jea
-    username: root
-    password:
+    url: jdbc:postgresql://localhost:5432/auth-jea
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 eureka:
   client:
@@ -22,5 +26,6 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
+
 jwt:
   secret: secret

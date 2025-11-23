@@ -229,6 +229,43 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuario;
     }
 
+    @Override
+    public List<UsuarioListadoDto> listarTodosConRol() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<UsuarioListadoDto> resultado = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+
+            String userName = usuario.getAuthUser() != null
+                    ? usuario.getAuthUser().getUserName()
+                    : null;
+
+            // Obtener roles del usuario
+            List<UsuarioRol> roles = usuarioRolRepository.findByUsuario(usuario);
+
+            String nombreRol = roles.isEmpty()
+                    ? "SIN ROL"
+                    : roles.get(0).getRol().getNombre().name();
+
+            UsuarioListadoDto dto = new UsuarioListadoDto(
+                    usuario.getId(),
+                    usuario.getNombres(),
+                    usuario.getApellidoPaterno(),
+                    usuario.getApellidoMaterno(),
+                    usuario.getDni(),
+                    usuario.getDireccion(),
+                    usuario.getTelefono(),
+                    usuario.getEstado(),
+                    userName,
+                    nombreRol
+            );
+
+            resultado.add(dto);
+        }
+
+        return resultado;
+    }
+
 
 
 }

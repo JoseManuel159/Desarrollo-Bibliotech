@@ -12,23 +12,24 @@
         <module name="jea-auth" />
         <module name="jea-registry-server" />
       </profile>
-      <profile name="Annotation profile for jea-venta" enabled="true">
+      <profile name="Annotation profile for jea-catalogo" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
-        <module name="jea-pedidos" />
-        <module name="jea-venta" />
-        <module name="jea-compra" />
-        <module name="jea-pagos" />
-        <module name="jea-cliente" />
-        <module name="jea-proveedor" />
         <module name="jea-catalogo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="jea-cliente" target="17" />
+      <module name="jea-compra" target="17" />
+      <module name="jea-pagos" target="17" />
+      <module name="jea-pedidos" target="17" />
+      <module name="jea-proveedor" target="17" />
+      <module name="jea-venta" target="17" />
       <module name="jes-inventario" target="17" />
     </bytecodeTargetLevel>
   </component>

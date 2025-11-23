@@ -18,5 +18,8 @@ public interface UsuarioService {
 
     Usuario actualizar(Long id, UsuarioDto dto);
 
+    List<UsuarioListadoDto> listarTodosConRol();
+
+
 
 }
